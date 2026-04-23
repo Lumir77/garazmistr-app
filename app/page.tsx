@@ -67,38 +67,7 @@ export default function HomePage() {
 
   return (
     <main className="page">
-      <div className="mobile-shell">
-        <div className="mobile-topbar">
-          <button className="icon-btn">＋</button>
-          <div className="mobile-title">Garážmistr</div>
-          <button className="icon-btn">⚙</button>
-        </div>
-
-        <h2 className="mobile-section-title">Moje vozidla</h2>
-
-        <div className="mobile-list">
-          {vehicles.slice(0, 4).map((vehicle) => (
-            <article className="vehicle-card mobile-card" key={vehicle.plate}>
-              <img src={vehicle.image} alt={vehicle.name} className="vehicle-image" />
-              <div className="vehicle-name">{vehicle.name} {vehicle.plate}</div>
-              <div className="vehicle-line">📅 {vehicle.lines[0]}</div>
-              <div className="vehicle-line">🛠 {vehicle.lines[1]}</div>
-              <div className={`status ${vehicle.status}`}>{vehicle.status === "warning" ? "POZOR" : "OK"}</div>
-            </article>
-          ))}
-        </div>
-
-        <button className="fab">＋</button>
-
-        <div className="mobile-nav">
-          <span className="active">Přehled</span>
-          <span>Události</span>
-          <span>Vozidla</span>
-          <span>Více</span>
-        </div>
-      </div>
-
-      <div className="desktop-shell">
+      <div className="app-shell">
         <aside className="sidebar">
           <div className="brand">🚗 Garážmistr</div>
           <nav className="menu">
@@ -118,6 +87,12 @@ export default function HomePage() {
         </aside>
 
         <section className="content">
+          <div className="mobile-topbar">
+            <button className="icon-btn">☰</button>
+            <div className="mobile-title">Garážmistr</div>
+            <button className="icon-btn">⚙</button>
+          </div>
+
           <div className="content-top">
             <div>
               <h1>Přehled vozidel</h1>
@@ -210,6 +185,15 @@ export default function HomePage() {
         </section>
       </div>
 
+      <button className="fab">＋</button>
+
+      <div className="mobile-nav">
+        <span className="active">Přehled</span>
+        <span>Události</span>
+        <span>Vozidla</span>
+        <span>Více</span>
+      </div>
+
       <style jsx>{`
         .page {
           min-height: 100vh;
@@ -218,126 +202,7 @@ export default function HomePage() {
           color: #111827;
           font-family: Arial, sans-serif;
         }
-        .mobile-shell {
-          max-width: 390px;
-          margin: 0 auto 32px auto;
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 34px;
-          padding: 18px 16px 86px;
-          box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-          position: relative;
-        }
-        .mobile-topbar, .content-top, .toolbar, .panel-head {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-        }
-        .mobile-title {
-          font-size: 20px;
-          font-weight: 700;
-        }
-        .icon-btn {
-          width: 42px;
-          height: 42px;
-          border-radius: 999px;
-          border: 1px solid #e5e7eb;
-          background: #fff;
-          font-size: 22px;
-          line-height: 1;
-          cursor: pointer;
-        }
-        .mobile-section-title {
-          margin: 18px 0 14px;
-          font-size: 16px;
-        }
-        .mobile-list {
-          display: grid;
-          gap: 12px;
-        }
-        .vehicle-card {
-          position: relative;
-          background: #fff;
-          border: 1px solid #e5e7eb;
-          border-radius: 18px;
-          padding: 14px;
-          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
-        }
-        .mobile-card {
-          padding-bottom: 18px;
-        }
-        .vehicle-image {
-          width: 100%;
-          height: 110px;
-          object-fit: contain;
-          margin-bottom: 8px;
-        }
-        .vehicle-name {
-          font-weight: 700;
-          font-size: 16px;
-          margin-bottom: 4px;
-        }
-        .vehicle-plate {
-          font-size: 14px;
-          color: #6b7280;
-          margin-bottom: 8px;
-        }
-        .vehicle-line {
-          font-size: 14px;
-          color: #1f2937;
-          margin-top: 6px;
-        }
-        .status {
-          position: absolute;
-          right: 12px;
-          bottom: 12px;
-          font-size: 12px;
-          font-weight: 700;
-          color: #fff;
-          padding: 5px 10px;
-          border-radius: 999px;
-        }
-        .status.ok {
-          background: #16a34a;
-        }
-        .status.warning {
-          background: #ef4444;
-        }
-        .fab {
-          position: absolute;
-          right: 18px;
-          bottom: 64px;
-          width: 64px;
-          height: 64px;
-          border-radius: 999px;
-          border: 0;
-          background: #2563eb;
-          color: #fff;
-          font-size: 34px;
-          cursor: pointer;
-          box-shadow: 0 18px 38px rgba(37, 99, 235, 0.35);
-        }
-        .mobile-nav {
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          border-top: 1px solid #e5e7eb;
-          background: #fff;
-          border-radius: 0 0 34px 34px;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          text-align: center;
-          padding: 12px 8px;
-          font-size: 12px;
-          color: #6b7280;
-        }
-        .mobile-nav .active {
-          color: #2563eb;
-          font-weight: 700;
-        }
-        .desktop-shell {
+        .app-shell {
           display: grid;
           grid-template-columns: 220px 1fr;
           gap: 0;
@@ -388,6 +253,19 @@ export default function HomePage() {
         .content {
           padding: 28px;
         }
+        .mobile-topbar {
+          display: none;
+        }
+        .mobile-title {
+          font-size: 20px;
+          font-weight: 700;
+        }
+        .content-top, .toolbar, .panel-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
         h1 {
           margin: 0;
           font-size: 28px;
@@ -405,6 +283,16 @@ export default function HomePage() {
           padding: 12px 18px;
           font-size: 16px;
           font-weight: 700;
+          cursor: pointer;
+        }
+        .icon-btn {
+          width: 42px;
+          height: 42px;
+          border-radius: 999px;
+          border: 1px solid #e5e7eb;
+          background: #fff;
+          font-size: 22px;
+          line-height: 1;
           cursor: pointer;
         }
         .desktop-icon {
@@ -465,6 +353,51 @@ export default function HomePage() {
           grid-template-columns: repeat(4, 1fr);
           gap: 16px;
           margin-top: 20px;
+        }
+        .vehicle-card {
+          position: relative;
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          border-radius: 18px;
+          padding: 14px;
+          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+        }
+        .vehicle-image {
+          width: 100%;
+          height: 120px;
+          object-fit: contain;
+          margin-bottom: 8px;
+        }
+        .vehicle-name {
+          font-weight: 700;
+          font-size: 16px;
+          margin-bottom: 4px;
+        }
+        .vehicle-plate {
+          font-size: 14px;
+          color: #6b7280;
+          margin-bottom: 8px;
+        }
+        .vehicle-line {
+          font-size: 14px;
+          color: #1f2937;
+          margin-top: 6px;
+        }
+        .status {
+          position: absolute;
+          right: 12px;
+          bottom: 12px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #fff;
+          padding: 5px 10px;
+          border-radius: 999px;
+        }
+        .status.ok {
+          background: #16a34a;
+        }
+        .status.warning {
+          background: #ef4444;
         }
         .bottom-grid {
           display: grid;
@@ -530,49 +463,120 @@ export default function HomePage() {
           font-size: 15px;
           font-weight: 700;
         }
+        .fab,
+        .mobile-nav {
+          display: none;
+        }
         @media (max-width: 1200px) {
           .cards-grid { grid-template-columns: repeat(3, 1fr); }
           .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 900px) {
-          .desktop-shell {
-            grid-template-columns: 1fr;
+          .page {
+            padding: 0 0 86px;
+          }
+          .app-shell {
+            display: block;
+            max-width: 100%;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
           }
           .sidebar {
             display: none;
           }
-          .cards-grid {
+          .content {
+            padding: 16px 16px 24px;
+          }
+          .mobile-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+          }
+          .content-top {
+            display: none;
+          }
+          .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+            margin-top: 0;
+          }
+          .toolbar {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .toolbar-right {
+            justify-content: space-between;
+          }
+          .search {
+            width: 100%;
+          }
+          .cards-grid {
+            grid-template-columns: 1fr;
+          }
+          .vehicle-image {
+            height: 110px;
           }
           .bottom-grid {
             grid-template-columns: 1fr;
           }
+          .fab {
+            display: flex;
+            position: fixed;
+            right: 18px;
+            bottom: 82px;
+            width: 62px;
+            height: 62px;
+            border-radius: 999px;
+            border: 0;
+            background: #2563eb;
+            color: #fff;
+            font-size: 34px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 18px 38px rgba(37, 99, 235, 0.35);
+            z-index: 20;
+          }
+          .mobile-nav {
+            display: grid;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top: 1px solid #e5e7eb;
+            background: #fff;
+            grid-template-columns: repeat(4, 1fr);
+            text-align: center;
+            padding: 12px 8px;
+            font-size: 12px;
+            color: #6b7280;
+            z-index: 10;
+          }
+          .mobile-nav .active {
+            color: #2563eb;
+            font-weight: 700;
+          }
         }
         @media (max-width: 640px) {
-          .page {
-            padding: 12px;
-          }
-          .mobile-shell {
-            margin-bottom: 20px;
-          }
-          .desktop-shell {
-            border-radius: 20px;
-          }
-          .content {
-            padding: 18px;
-          }
-          .content-top, .toolbar {
-            flex-direction: column;
-            align-items: stretch;
-          }
-          .top-actions, .toolbar-right {
-            justify-content: space-between;
-          }
-          .cards-grid, .stats-grid {
+          .stats-grid {
             grid-template-columns: 1fr;
+          }
+          .panel-head {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .upcoming-row {
+            grid-template-columns: 4px 1fr;
+          }
+          .upcoming-date {
+            grid-column: 2;
           }
         }
       `}</style>
     </main>
   );
 }
+
