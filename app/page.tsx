@@ -1,4 +1,5 @@
 "use client";
+
 export default function HomePage() {
   const vehicles = [
     {
@@ -233,4 +234,3 @@ export default function HomePage() {
           padding: 24px;
           color: #111827;
           font-family: Arial, sans-serif
-
