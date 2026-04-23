@@ -626,14 +626,14 @@ export default function HomePage() {
 
           .stats-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-top: 0;
           }
 
           .stat-card {
-            padding: 10px 12px;
+            padding: 8px 10px;
             border-radius: 12px;
-            min-height: 76px;
+            min-height: 72px;
           }
 
           .stat-label {
@@ -643,7 +643,7 @@ export default function HomePage() {
           }
 
           .stat-value {
-            font-size: 22px;
+            font-size: 20px;
           }
 
           .stat-note {
