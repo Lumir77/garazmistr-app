@@ -127,11 +127,12 @@ export default function HomePage() {
           <div className="content-top">
             <h1>Přehled vozidel</h1>
 
-            <div className="top-actions">
-              <button className="primary-btn" type="button">＋ Přidat vozidlo</button>
-              <button className="icon-btn desktop-icon" type="button">⚙</button>
-            </div>
-          </div>
+         <div className="top-actions">
+          <a href="/add-vehicle" className="primary-btn">
+            ＋ Přidat vozidlo
+          </a>
+          <button className="icon-btn desktop-icon" type="button">⚙</button>
+         </div>
 
           <div className="stats-grid">
             <div className="stat-card">
