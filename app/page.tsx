@@ -127,12 +127,13 @@ export default function HomePage() {
           <div className="content-top">
             <h1>Přehled vozidel</h1>
 
-         <div className="top-actions">
-          <a href="/add-vehicle" className="primary-btn">
-            ＋ Přidat vozidlo
-          </a>
-          <button className="icon-btn desktop-icon" type="button">⚙</button>
-         </div>
+            <div className="top-actions">
+              <a href="/add-vehicle" className="primary-btn">
+                ＋ Přidat vozidlo
+              </a>
+              <button className="icon-btn desktop-icon" type="button">⚙</button>
+            </div>
+          </div>
 
           <div className="stats-grid">
             <div className="stat-card">
@@ -232,7 +233,7 @@ export default function HomePage() {
               </div>
 
               <div className="quick-actions">
-                <button type="button">Přidat vozidlo</button>
+                <a href="/add-vehicle">Přidat vozidlo</a>
                 <button type="button">Přidat událost / připomínku</button>
                 <button type="button">Nahrát dokument</button>
                 <button type="button">Servisní záznam</button>
@@ -242,7 +243,7 @@ export default function HomePage() {
         </section>
       </div>
 
-      <button className="fab" type="button">＋</button>
+      <a href="/add-vehicle" className="fab">＋</a>
 
       <div className="mobile-nav">
         <span className="active">Přehled</span>
@@ -356,6 +357,9 @@ export default function HomePage() {
           font-size: 16px;
           font-weight: 700;
           cursor: pointer;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
         }
 
         .icon-btn {
@@ -582,7 +586,8 @@ export default function HomePage() {
           margin-top: 16px;
         }
 
-        .quick-actions button {
+        .quick-actions button,
+        .quick-actions a {
           border: 1px solid #dbe3f0;
           background: #f8fbff;
           color: #2563eb;
@@ -591,6 +596,8 @@ export default function HomePage() {
           text-align: left;
           font-size: 15px;
           font-weight: 700;
+          text-decoration: none;
+          cursor: pointer;
         }
 
         .fab,
@@ -710,6 +717,7 @@ export default function HomePage() {
             cursor: pointer;
             box-shadow: 0 18px 38px rgba(37, 99, 235, 0.35);
             z-index: 20;
+            text-decoration: none;
           }
 
           .mobile-nav {
