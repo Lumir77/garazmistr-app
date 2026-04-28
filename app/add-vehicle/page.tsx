@@ -6,7 +6,6 @@ export default function AddVehiclePage() {
   const [vehicleType, setVehicleType] = useState("osobni");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showStkHelper, setShowStkHelper] = useState(false);
-  const [foreignVignettes, setForeignVignettes] = useState([1]);
 
   const [stkValidUntil, setStkValidUntil] = useState("");
   const [firstRegistrationDate, setFirstRegistrationDate] = useState("");
@@ -19,6 +18,23 @@ export default function AddVehiclePage() {
   const [vignetteFrom, setVignetteFrom] = useState("");
   const [vignettePeriod, setVignettePeriod] = useState("1 rok");
   const [vignetteTo, setVignetteTo] = useState("");
+
+  const [currentKm, setCurrentKm] = useState("");
+  const [lastOilKm, setLastOilKm] = useState("");
+  const [oilIntervalKm, setOilIntervalKm] = useState("15000");
+  const [lastOilDate, setLastOilDate] = useState("");
+  const [nextOilKm, setNextOilKm] = useState("");
+  const [nextOilDate, setNextOilDate] = useState("");
+
+  const [foreignVignettes, setForeignVignettes] = useState([
+    {
+      id: 1,
+      country: "Rakousko",
+      period: "10 dní",
+      from: "",
+      to: "",
+    },
+  ]);
 
   const isCar =
     vehicleType === "osobni" ||
@@ -34,8 +50,10 @@ export default function AddVehiclePage() {
 
   const hasStk = isCar || isCamper || isTrailer || isLongTrailer || isCaravan;
 
-  const calculateEndDate = (startDate, period) => {
-    if (!startDate) return "";
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  const calculateValidToDate = (startDate, period) => {
+    if (!startDate || period === "Vlastní") return "";
 
     const date = new Date(startDate);
 
@@ -69,7 +87,8 @@ export default function AddVehiclePage() {
         return "";
     }
 
-    return date.toISOString().split("T")[0];
+    date.setDate(date.getDate() - 1);
+    return formatDate(date);
   };
 
   const calculateStkDate = () => {
@@ -85,7 +104,44 @@ export default function AddVehiclePage() {
       date.setFullYear(date.getFullYear() + 2);
     }
 
-    setStkValidUntil(date.toISOString().split("T")[0]);
+    date.setDate(date.getDate() - 1);
+    setStkValidUntil(formatDate(date));
+  };
+
+  const calculateOilService = (oilKm, intervalKm, oilDate) => {
+    if (oilKm && intervalKm) {
+      setNextOilKm(String(Number(oilKm) + Number(intervalKm)));
+    }
+
+    if (oilDate) {
+      const date = new Date(oilDate);
+      date.setFullYear(date.getFullYear() + 1);
+      date.setDate(date.getDate() - 1);
+      setNextOilDate(formatDate(date));
+    }
+  };
+
+  const updateForeignVignette = (id, field, value) => {
+    setForeignVignettes((items) =>
+      items.map((item) => {
+        if (item.id !== id) return item;
+
+        const updated = {
+          ...item,
+          [field]: value,
+        };
+
+        if (field === "from") {
+          updated.to = calculateValidToDate(value, updated.period);
+        }
+
+        if (field === "period") {
+          updated.to = calculateValidToDate(updated.from, value);
+        }
+
+        return updated;
+      })
+    );
   };
 
   return (
@@ -150,7 +206,14 @@ export default function AddVehiclePage() {
           <div className="grid">
             {(isCar || isCamper) && (
               <>
-                <label>Aktuální kilometry<input placeholder="např. 128450" /></label>
+                <label>
+                  Aktuální kilometry
+                  <input
+                    value={currentKm}
+                    onChange={(e) => setCurrentKm(e.target.value)}
+                    placeholder="např. 128450"
+                  />
+                </label>
 
                 <label>
                   Palivo
@@ -162,8 +225,6 @@ export default function AddVehiclePage() {
                     <option>LPG / CNG</option>
                   </select>
                 </label>
-
-                <label>Interval výměny oleje<input placeholder="např. 15000 km" /></label>
               </>
             )}
 
@@ -214,6 +275,76 @@ export default function AddVehiclePage() {
             )}
           </div>
         </section>
+
+        {(isCar || isCamper) && (
+          <section className="panel">
+            <h2>Výměna oleje</h2>
+
+            <div className="grid">
+              <label>
+                Poslední výměna oleje při km
+                <input
+                  value={lastOilKm}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setLastOilKm(value);
+                    calculateOilService(value, oilIntervalKm, lastOilDate);
+                  }}
+                  placeholder="např. 120000"
+                />
+              </label>
+
+              <label>
+                Interval výměny oleje v km
+                <input
+                  value={oilIntervalKm}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setOilIntervalKm(value);
+                    calculateOilService(lastOilKm, value, lastOilDate);
+                  }}
+                  placeholder="např. 15000"
+                />
+              </label>
+
+              <label>
+                Poslední výměna oleje datum
+                <input
+                  type="date"
+                  value={lastOilDate}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setLastOilDate(value);
+                    calculateOilService(lastOilKm, oilIntervalKm, value);
+                  }}
+                />
+              </label>
+
+              <label>
+                Další výměna oleje při km
+                <input
+                  value={nextOilKm}
+                  onChange={(e) => setNextOilKm(e.target.value)}
+                  placeholder="vypočítá se automaticky"
+                />
+              </label>
+
+              <label>
+                Další výměna oleje nejpozději
+                <input
+                  type="date"
+                  value={nextOilDate}
+                  onChange={(e) => setNextOilDate(e.target.value)}
+                />
+              </label>
+
+              <div className="info wide">
+                Olej se hlídá podle toho, co nastane dříve: dosažený nájezd km,
+                nebo 1 rok od poslední výměny.
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="panel">
           <h2>Důležité termíny</h2>
@@ -293,7 +424,7 @@ export default function AddVehiclePage() {
                 onChange={(e) => {
                   const value = e.target.value;
                   setInsuranceFrom(value);
-                  setInsuranceTo(calculateEndDate(value, insurancePeriod));
+                  setInsuranceTo(calculateValidToDate(value, insurancePeriod));
                 }}
               />
             </label>
@@ -305,7 +436,7 @@ export default function AddVehiclePage() {
                 onChange={(e) => {
                   const value = e.target.value;
                   setInsurancePeriod(value);
-                  setInsuranceTo(calculateEndDate(insuranceFrom, value));
+                  setInsuranceTo(calculateValidToDate(insuranceFrom, value));
                 }}
               >
                 <option>Ročně</option>
@@ -335,7 +466,7 @@ export default function AddVehiclePage() {
                     onChange={(e) => {
                       const value = e.target.value;
                       setVignetteFrom(value);
-                      setVignetteTo(calculateEndDate(value, vignettePeriod));
+                      setVignetteTo(calculateValidToDate(value, vignettePeriod));
                     }}
                   />
                 </label>
@@ -347,7 +478,7 @@ export default function AddVehiclePage() {
                     onChange={(e) => {
                       const value = e.target.value;
                       setVignettePeriod(value);
-                      setVignetteTo(calculateEndDate(vignetteFrom, value));
+                      setVignetteTo(calculateValidToDate(vignetteFrom, value));
                     }}
                   >
                     <option>1 den</option>
@@ -406,7 +537,7 @@ export default function AddVehiclePage() {
 
               <div className="foreign-list">
                 {foreignVignettes.map((item, index) => (
-                  <div className="foreign-card" key={item}>
+                  <div className="foreign-card" key={item.id}>
                     <div className="foreign-head">
                       <strong>Známka #{index + 1}</strong>
 
@@ -416,7 +547,7 @@ export default function AddVehiclePage() {
                           className="remove"
                           onClick={() =>
                             setForeignVignettes(
-                              foreignVignettes.filter((v) => v !== item)
+                              foreignVignettes.filter((v) => v.id !== item.id)
                             )
                           }
                         >
@@ -428,7 +559,12 @@ export default function AddVehiclePage() {
                     <div className="grid">
                       <label>
                         Stát
-                        <select>
+                        <select
+                          value={item.country}
+                          onChange={(e) =>
+                            updateForeignVignette(item.id, "country", e.target.value)
+                          }
+                        >
                           <option>Rakousko</option>
                           <option>Slovensko</option>
                           <option>Maďarsko</option>
@@ -441,7 +577,12 @@ export default function AddVehiclePage() {
 
                       <label>
                         Platnost
-                        <select>
+                        <select
+                          value={item.period}
+                          onChange={(e) =>
+                            updateForeignVignette(item.id, "period", e.target.value)
+                          }
+                        >
                           <option>1 den</option>
                           <option>10 dní</option>
                           <option>30 dní</option>
@@ -451,8 +592,27 @@ export default function AddVehiclePage() {
                         </select>
                       </label>
 
-                      <label>Platí od<input type="date" /></label>
-                      <label>Platí do<input type="date" /></label>
+                      <label>
+                        Platí od
+                        <input
+                          type="date"
+                          value={item.from}
+                          onChange={(e) =>
+                            updateForeignVignette(item.id, "from", e.target.value)
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        Platí do
+                        <input
+                          type="date"
+                          value={item.to}
+                          onChange={(e) =>
+                            updateForeignVignette(item.id, "to", e.target.value)
+                          }
+                        />
+                      </label>
                     </div>
                   </div>
                 ))}
@@ -462,7 +622,16 @@ export default function AddVehiclePage() {
                 type="button"
                 className="add-foreign"
                 onClick={() =>
-                  setForeignVignettes([...foreignVignettes, Date.now()])
+                  setForeignVignettes([
+                    ...foreignVignettes,
+                    {
+                      id: Date.now(),
+                      country: "Rakousko",
+                      period: "10 dní",
+                      from: "",
+                      to: "",
+                    },
+                  ])
                 }
               >
                 ＋ Přidat další zahraniční známku
@@ -602,6 +771,16 @@ export default function AddVehiclePage() {
 
         .wide {
           grid-column: 1 / -1;
+        }
+
+        .info {
+          background: #f8fbff;
+          border: 1px solid #dbeafe;
+          border-radius: 14px;
+          padding: 12px 14px;
+          color: #374151;
+          font-size: 14px;
+          line-height: 1.5;
         }
 
         .stk-box {
