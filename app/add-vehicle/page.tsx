@@ -5,7 +5,20 @@ import { useState } from "react";
 export default function AddVehiclePage() {
   const [vehicleType, setVehicleType] = useState("osobni");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showStkHelper, setShowStkHelper] = useState(false);
   const [foreignVignettes, setForeignVignettes] = useState([1]);
+
+  const [stkValidUntil, setStkValidUntil] = useState("");
+  const [firstRegistrationDate, setFirstRegistrationDate] = useState("");
+  const [stkMode, setStkMode] = useState("first_4_years");
+
+  const [insuranceFrom, setInsuranceFrom] = useState("");
+  const [insurancePeriod, setInsurancePeriod] = useState("Ročně");
+  const [insuranceTo, setInsuranceTo] = useState("");
+
+  const [vignetteFrom, setVignetteFrom] = useState("");
+  const [vignettePeriod, setVignettePeriod] = useState("1 rok");
+  const [vignetteTo, setVignetteTo] = useState("");
 
   const isCar =
     vehicleType === "osobni" ||
@@ -18,6 +31,62 @@ export default function AddVehiclePage() {
   const isLongTrailer = vehicleType === "dlouhy-prives";
   const isCaravan = vehicleType === "obytny-prives";
   const isForklift = vehicleType === "vzv";
+
+  const hasStk = isCar || isCamper || isTrailer || isLongTrailer || isCaravan;
+
+  const calculateEndDate = (startDate, period) => {
+    if (!startDate) return "";
+
+    const date = new Date(startDate);
+
+    switch (period) {
+      case "1 den":
+        date.setDate(date.getDate() + 1);
+        break;
+      case "10 dní":
+        date.setDate(date.getDate() + 10);
+        break;
+      case "30 dní":
+        date.setDate(date.getDate() + 30);
+        break;
+      case "2 měsíce":
+        date.setMonth(date.getMonth() + 2);
+        break;
+      case "1 rok":
+      case "Ročně":
+        date.setFullYear(date.getFullYear() + 1);
+        break;
+      case "Pololetně":
+        date.setMonth(date.getMonth() + 6);
+        break;
+      case "Čtvrtletně":
+        date.setMonth(date.getMonth() + 3);
+        break;
+      case "Měsíčně":
+        date.setMonth(date.getMonth() + 1);
+        break;
+      default:
+        return "";
+    }
+
+    return date.toISOString().split("T")[0];
+  };
+
+  const calculateStkDate = () => {
+    if (!firstRegistrationDate) return;
+
+    const date = new Date(firstRegistrationDate);
+
+    if (stkMode === "first_4_years") {
+      date.setFullYear(date.getFullYear() + 4);
+    }
+
+    if (stkMode === "regular_2_years") {
+      date.setFullYear(date.getFullYear() + 2);
+    }
+
+    setStkValidUntil(date.toISOString().split("T")[0]);
+  };
 
   return (
     <main className="page">
@@ -150,13 +219,95 @@ export default function AddVehiclePage() {
           <h2>Důležité termíny</h2>
 
           <div className="grid">
-            <label>STK<input type="date" /></label>
+            {hasStk && (
+              <div className="wide stk-box">
+                <label>
+                  STK platí do
+                  <input
+                    type="date"
+                    value={stkValidUntil}
+                    onChange={(e) => setStkValidUntil(e.target.value)}
+                  />
+                </label>
 
-            <label>Pojištění platí do / další platba<input type="date" /></label>
+                <button
+                  type="button"
+                  className="helper-toggle"
+                  onClick={() => setShowStkHelper(!showStkHelper)}
+                >
+                  {showStkHelper
+                    ? "Skrýt výpočet STK"
+                    : "Nevím datum – dopočítat podle první registrace"}
+                </button>
+
+                {showStkHelper && (
+                  <div className="stk-helper">
+                    <p>
+                      Pokud znáš přesné datum platnosti STK, stačí vyplnit pole výše.
+                      Výpočet je jen pomocník.
+                    </p>
+
+                    <div className="grid">
+                      <label>
+                        Datum první registrace
+                        <input
+                          type="date"
+                          value={firstRegistrationDate}
+                          onChange={(e) => setFirstRegistrationDate(e.target.value)}
+                        />
+                      </label>
+
+                      <label>
+                        Režim výpočtu STK
+                        <select
+                          value={stkMode}
+                          onChange={(e) => setStkMode(e.target.value)}
+                        >
+                          <option value="first_4_years">
+                            První STK – nové vozidlo (+4 roky)
+                          </option>
+                          <option value="regular_2_years">
+                            Další STK – běžný interval (+2 roky)
+                          </option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="calculate"
+                      onClick={calculateStkDate}
+                    >
+                      Dopočítat STK
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <label>
+              Pojištění platí od
+              <input
+                type="date"
+                value={insuranceFrom}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setInsuranceFrom(value);
+                  setInsuranceTo(calculateEndDate(value, insurancePeriod));
+                }}
+              />
+            </label>
 
             <label>
               Periodicita pojištění
-              <select>
+              <select
+                value={insurancePeriod}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setInsurancePeriod(value);
+                  setInsuranceTo(calculateEndDate(insuranceFrom, value));
+                }}
+              >
                 <option>Ročně</option>
                 <option>Pololetně</option>
                 <option>Čtvrtletně</option>
@@ -165,13 +316,40 @@ export default function AddVehiclePage() {
               </select>
             </label>
 
+            <label>
+              Pojištění platí do / další platba
+              <input
+                type="date"
+                value={insuranceTo}
+                onChange={(e) => setInsuranceTo(e.target.value)}
+              />
+            </label>
+
             {(isCar || isCamper) && (
               <>
-                <label>Dálniční známka platí od<input type="date" /></label>
+                <label>
+                  Dálniční známka platí od
+                  <input
+                    type="date"
+                    value={vignetteFrom}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setVignetteFrom(value);
+                      setVignetteTo(calculateEndDate(value, vignettePeriod));
+                    }}
+                  />
+                </label>
 
                 <label>
                   Platnost dálniční známky
-                  <select>
+                  <select
+                    value={vignettePeriod}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setVignettePeriod(value);
+                      setVignetteTo(calculateEndDate(vignetteFrom, value));
+                    }}
+                  >
                     <option>1 den</option>
                     <option>10 dní</option>
                     <option>30 dní</option>
@@ -180,7 +358,14 @@ export default function AddVehiclePage() {
                   </select>
                 </label>
 
-                <label>Dálniční známka platí do<input type="date" /></label>
+                <label>
+                  Dálniční známka platí do
+                  <input
+                    type="date"
+                    value={vignetteTo}
+                    onChange={(e) => setVignetteTo(e.target.value)}
+                  />
+                </label>
               </>
             )}
 
@@ -224,12 +409,15 @@ export default function AddVehiclePage() {
                   <div className="foreign-card" key={item}>
                     <div className="foreign-head">
                       <strong>Známka #{index + 1}</strong>
+
                       {foreignVignettes.length > 1 && (
                         <button
                           type="button"
                           className="remove"
                           onClick={() =>
-                            setForeignVignettes(foreignVignettes.filter((v) => v !== item))
+                            setForeignVignettes(
+                              foreignVignettes.filter((v) => v !== item)
+                            )
                           }
                         >
                           Odebrat
@@ -273,7 +461,9 @@ export default function AddVehiclePage() {
               <button
                 type="button"
                 className="add-foreign"
-                onClick={() => setForeignVignettes([...foreignVignettes, Date.now()])}
+                onClick={() =>
+                  setForeignVignettes([...foreignVignettes, Date.now()])
+                }
               >
                 ＋ Přidat další zahraniční známku
               </button>
@@ -412,6 +602,41 @@ export default function AddVehiclePage() {
 
         .wide {
           grid-column: 1 / -1;
+        }
+
+        .stk-box {
+          border: 1px solid #dbeafe;
+          background: #f8fbff;
+          border-radius: 18px;
+          padding: 16px;
+        }
+
+        .helper-toggle {
+          margin-top: 10px;
+          border: 0;
+          background: transparent;
+          color: #2563eb;
+          font-weight: 800;
+          cursor: pointer;
+          padding: 0;
+          text-align: left;
+        }
+
+        .stk-helper {
+          margin-top: 14px;
+          padding-top: 14px;
+          border-top: 1px solid #dbeafe;
+        }
+
+        .calculate {
+          margin-top: 14px;
+          border: 1px solid #bfdbfe;
+          background: #eff6ff;
+          color: #1d4ed8;
+          border-radius: 12px;
+          padding: 11px 14px;
+          font-weight: 800;
+          cursor: pointer;
         }
 
         .advanced-toggle {
