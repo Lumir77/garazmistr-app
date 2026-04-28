@@ -14,6 +14,8 @@ export default function AddVehiclePage() {
 
   const isCamper = vehicleType === "obytne-auto";
   const isTrailer = vehicleType === "prives";
+  const isLongTrailer = vehicleType === "dlouhy-prives";
+  const isCaravan = vehicleType === "obytny-prives";
   const isForklift = vehicleType === "vzv";
 
   return (
@@ -24,166 +26,503 @@ export default function AddVehiclePage() {
           <h1>Nové vozidlo</h1>
         </div>
 
-        {/* ZÁKLAD */}
+        <section className="panel highlight">
+          <div>
+            <h2>Rychlé založení vozidla</h2>
+            <p>
+              Vyber typ vozidla. Formulář se automaticky přizpůsobí tomu,
+              co má pro dané vozidlo smysl.
+            </p>
+          </div>
+
+          <button className="secondary" type="button">
+            📄 Načíst z eTechničáku / QR
+          </button>
+        </section>
+
         <section className="panel">
           <h2>Základní údaje</h2>
 
           <div className="grid">
-            <select
-              value={vehicleType}
-              onChange={(e) => setVehicleType(e.target.value)}
-            >
-              <option value="osobni">Osobní auto</option>
-              <option value="suv">SUV</option>
-              <option value="kombi">Kombi</option>
-              <option value="pickup">Pick-up</option>
-              <option value="prives">Přívěs</option>
-              <option value="vzv">VZV</option>
-              <option value="obytne-auto">Obytné auto</option>
-            </select>
+            <label>
+              Typ vozidla
+              <select
+                value={vehicleType}
+                onChange={(e) => setVehicleType(e.target.value)}
+              >
+                <option value="osobni">Osobní auto</option>
+                <option value="suv">SUV</option>
+                <option value="kombi">Kombi</option>
+                <option value="pickup">Pick-up</option>
+                <option value="prives">Přívěsný vozík</option>
+                <option value="dlouhy-prives">Dlouhý přívěsný vozík</option>
+                <option value="vzv">Vysokozdvižný vozík</option>
+                <option value="obytny-prives">Obytný přívěs</option>
+                <option value="obytne-auto">Obytné auto</option>
+              </select>
+            </label>
 
-            <input placeholder="Značka" />
-            <input placeholder="Model" />
-            <input placeholder="SPZ" />
+            <label>
+              Značka
+              <input placeholder="např. Škoda" />
+            </label>
+
+            <label>
+              Model
+              <input placeholder="např. Octavia" />
+            </label>
+
+            <label>
+              Rok výroby
+              <input placeholder="např. 2020" />
+            </label>
+
+            <label>
+              SPZ / evidence
+              <input placeholder="např. 1TA234" />
+            </label>
+
+            <label>
+              Obrázek / typ ikony
+              <select>
+                <option>Automaticky podle typu</option>
+                <option>Vybrat ručně</option>
+              </select>
+            </label>
           </div>
         </section>
 
-        {/* PROVOZ */}
         <section className="panel">
-          <h2>Provoz</h2>
+          <h2>Provozní údaje</h2>
 
           <div className="grid">
             {(isCar || isCamper) && (
               <>
-                <input placeholder="Kilometry" />
-                <select>
-                  <option>Palivo</option>
-                  <option>Benzín</option>
-                  <option>Nafta</option>
-                  <option>Elektro</option>
-                </select>
+                <label>
+                  Aktuální kilometry
+                  <input placeholder="např. 128450" />
+                </label>
+
+                <label>
+                  Palivo
+                  <select>
+                    <option>Benzín</option>
+                    <option>Nafta</option>
+                    <option>Elektro</option>
+                    <option>Hybrid</option>
+                    <option>LPG / CNG</option>
+                  </select>
+                </label>
+
+                <label>
+                  Interval výměny oleje
+                  <input placeholder="např. 15000 km" />
+                </label>
               </>
             )}
 
-            {isForklift && <input placeholder="Motohodiny" />}
+            {isForklift && (
+              <>
+                <label>
+                  Aktuální motohodiny
+                  <input placeholder="např. 2450 mth" />
+                </label>
 
-            {isTrailer && <input placeholder="Nosnost (kg)" />}
-          </div>
-        </section>
+                <label>
+                  Pohon
+                  <select>
+                    <option>Elektro</option>
+                    <option>Diesel</option>
+                    <option>LPG</option>
+                  </select>
+                </label>
 
-        {/* TERMÍNY */}
-        <section className="panel">
-          <h2>Hlavní termíny</h2>
+                <label>
+                  Interval servisní kontroly
+                  <input placeholder="např. 250 mth" />
+                </label>
+              </>
+            )}
 
-          <div className="grid">
-            <input placeholder="STK" />
-            <input placeholder="Pojištění" />
+            {(isTrailer || isLongTrailer || isCaravan) && (
+              <>
+                <label>
+                  Nosnost
+                  <input placeholder="např. 750 kg" />
+                </label>
 
-            {(isCar || isCamper) && (
-              <input placeholder="Dálniční známka" />
+                <label>
+                  Počet náprav
+                  <select>
+                    <option>1 náprava</option>
+                    <option>2 nápravy</option>
+                    <option>3 nápravy</option>
+                  </select>
+                </label>
+              </>
+            )}
+
+            {isCamper && (
+              <>
+                <label>
+                  Revize nástavby
+                  <input placeholder="např. 01.06.2026" />
+                </label>
+
+                <label>
+                  Revize plynu
+                  <input placeholder="např. 01.06.2026" />
+                </label>
+              </>
+            )}
+
+            {isCaravan && (
+              <>
+                <label>
+                  Revize plynu
+                  <input placeholder="např. 01.06.2026" />
+                </label>
+
+                <label>
+                  Kontrola obytné části
+                  <input placeholder="např. 01.06.2026" />
+                </label>
+              </>
             )}
           </div>
         </section>
 
-        {/* ROZBALOVACÍ */}
+        <section className="panel">
+          <h2>Důležité termíny</h2>
+
+          <div className="grid">
+            <label>
+              STK
+              <input placeholder="např. 04.05.2026" />
+            </label>
+
+            <label>
+              Pojištění
+              <input placeholder="např. 10.06.2026" />
+            </label>
+
+            {(isCar || isCamper) && (
+              <label>
+                Dálniční známka
+                <input placeholder="např. 15.06.2026" />
+              </label>
+            )}
+
+            {isForklift && (
+              <label>
+                Revize VZV
+                <input placeholder="např. 30.04.2026" />
+              </label>
+            )}
+
+            {(isTrailer || isLongTrailer || isCaravan) && (
+              <label>
+                Kontrola / servis přívěsu
+                <input placeholder="např. 18.08.2026" />
+              </label>
+            )}
+          </div>
+        </section>
+
         <section className="panel">
           <button
-            className="toggle"
+            className="advanced-toggle"
+            type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
           >
             {showAdvanced ? "Skrýt další možnosti" : "Zobrazit další možnosti"}
           </button>
 
           {showAdvanced && (
-            <div className="grid advanced">
-              <input placeholder="Periodicita pojištění (měsíčně/ročně)" />
-              <input placeholder="Depozit značek - datum" />
-              <input placeholder="Zahraniční známka (stát)" />
-              <input placeholder="Revize (plyn, nástavba...)" />
-              <input placeholder="Poznámka" />
+            <div className="advanced">
+              <h2>Další možnosti</h2>
+
+              <div className="grid">
+                <label>
+                  Periodicita pojištění
+                  <select>
+                    <option>Ročně</option>
+                    <option>Pololetně</option>
+                    <option>Čtvrtletně</option>
+                    <option>Měsíčně</option>
+                    <option>Vlastní</option>
+                  </select>
+                </label>
+
+                <label>
+                  Značky v depozitu
+                  <select>
+                    <option>Ne</option>
+                    <option>Ano</option>
+                  </select>
+                </label>
+
+                <label>
+                  Datum odevzdání značek
+                  <input placeholder="např. 01.01.2026" />
+                </label>
+
+                <label>
+                  Zahraniční dálniční známka
+                  <input placeholder="např. Rakousko, Slovensko..." />
+                </label>
+
+                <label>
+                  Platnost zahraniční známky
+                  <select>
+                    <option>1 den</option>
+                    <option>10 dní</option>
+                    <option>30 dní</option>
+                    <option>2 měsíce</option>
+                    <option>1 rok</option>
+                    <option>Vlastní</option>
+                  </select>
+                </label>
+
+                <label>
+                  Platí do
+                  <input placeholder="např. 20.07.2026" />
+                </label>
+
+                {(isCamper || isCaravan) && (
+                  <>
+                    <label>
+                      Revize elektroinstalace
+                      <input placeholder="např. 01.06.2026" />
+                    </label>
+
+                    <label>
+                      Kontrola těsnosti
+                      <input placeholder="např. 01.06.2026" />
+                    </label>
+                  </>
+                )}
+
+                <label className="wide">
+                  Poznámka
+                  <textarea placeholder="Doplňující informace k vozidlu..." />
+                </label>
+              </div>
             </div>
           )}
         </section>
 
+        <section className="panel">
+          <h2>Odpovědná osoba</h2>
+
+          <div className="grid">
+            <label>
+              Jméno
+              <input placeholder="Jan Novák" />
+            </label>
+
+            <label>
+              Telefon
+              <input placeholder="+420..." />
+            </label>
+
+            <label>
+              E-mail
+              <input placeholder="email@firma.cz" />
+            </label>
+          </div>
+        </section>
+
         <div className="actions">
-          <button className="primary">Uložit vozidlo</button>
+          <button className="primary" type="button">Uložit vozidlo</button>
           <a href="/" className="cancel">Zrušit</a>
         </div>
       </div>
 
       <style jsx>{`
         .page {
-          background: #f4f6fb;
           min-height: 100vh;
+          background: #f4f6fb;
           padding: 24px;
-          font-family: Arial;
+          color: #111827;
+          font-family: Arial, sans-serif;
         }
 
         .shell {
-          max-width: 800px;
-          margin: auto;
+          max-width: 980px;
+          margin: 0 auto;
         }
 
         .topbar {
           display: flex;
+          align-items: center;
           justify-content: space-between;
+          gap: 16px;
           margin-bottom: 20px;
         }
 
+        .back {
+          color: #2563eb;
+          text-decoration: none;
+          font-weight: 700;
+        }
+
+        h1 {
+          margin: 0;
+          font-size: 32px;
+        }
+
+        h2 {
+          margin: 0 0 16px;
+          font-size: 22px;
+        }
+
+        p {
+          margin: 0;
+          color: #6b7280;
+          line-height: 1.5;
+        }
+
         .panel {
-          background: white;
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          border-radius: 22px;
           padding: 20px;
-          border-radius: 18px;
           margin-bottom: 16px;
-          border: 1px solid #ddd;
+          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+        }
+
+        .panel.highlight {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 18px;
+          background: #fbfcfe;
         }
 
         .grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
+          gap: 14px;
         }
 
-        input, select {
-          padding: 12px;
-          border-radius: 10px;
-          border: 1px solid #ccc;
+        label {
+          display: grid;
+          gap: 7px;
+          color: #374151;
+          font-size: 14px;
+          font-weight: 700;
         }
 
-        .toggle {
+        input,
+        select,
+        textarea {
           width: 100%;
-          padding: 12px;
+          box-sizing: border-box;
+          border: 1px solid #d1d5db;
           border-radius: 12px;
-          background: #eef3ff;
-          border: none;
+          padding: 12px 14px;
+          font-size: 15px;
+          background: #fff;
+          color: #111827;
+          font-family: Arial, sans-serif;
+        }
+
+        textarea {
+          min-height: 90px;
+          resize: vertical;
+        }
+
+        .wide {
+          grid-column: 1 / -1;
+        }
+
+        .advanced-toggle {
+          width: 100%;
+          border: 1px solid #dbe3f0;
+          background: #f8fbff;
+          color: #2563eb;
+          border-radius: 14px;
+          padding: 14px;
+          font-size: 15px;
+          font-weight: 800;
           cursor: pointer;
         }
 
         .advanced {
-          margin-top: 12px;
+          margin-top: 18px;
+          padding-top: 18px;
+          border-top: 1px solid #e5e7eb;
         }
 
         .actions {
           display: flex;
           gap: 12px;
+          margin-top: 20px;
+        }
+
+        .primary,
+        .secondary {
+          border-radius: 14px;
+          padding: 12px 18px;
+          font-weight: 800;
+          cursor: pointer;
         }
 
         .primary {
+          border: 0;
           background: #2563eb;
-          color: white;
-          border: none;
-          padding: 14px;
-          border-radius: 12px;
+          color: #fff;
+        }
+
+        .secondary {
+          border: 1px solid #d1d5db;
+          background: #fff;
+          color: #111827;
         }
 
         .cancel {
-          padding: 14px;
-          color: gray;
+          display: inline-flex;
+          align-items: center;
+          padding: 12px 14px;
+          color: #6b7280;
+          text-decoration: none;
+          font-weight: 700;
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 760px) {
+          .page {
+            padding: 14px;
+          }
+
+          .topbar {
+            align-items: flex-start;
+            flex-direction: column;
+          }
+
+          .panel.highlight {
+            align-items: stretch;
+            flex-direction: column;
+          }
+
           .grid {
             grid-template-columns: 1fr;
+          }
+
+          .wide {
+            grid-column: auto;
+          }
+
+          .actions {
+            flex-direction: column;
+          }
+
+          .primary,
+          .secondary,
+          .cancel {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
           }
         }
       `}</style>
