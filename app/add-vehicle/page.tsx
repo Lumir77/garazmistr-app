@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function AddVehiclePage() {
   const [vehicleType, setVehicleType] = useState("osobni");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [foreignVignettes, setForeignVignettes] = useState([1]);
 
   const isCar =
     vehicleType === "osobni" ||
@@ -46,10 +47,7 @@ export default function AddVehiclePage() {
           <div className="grid">
             <label>
               Typ vozidla
-              <select
-                value={vehicleType}
-                onChange={(e) => setVehicleType(e.target.value)}
-              >
+              <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)}>
                 <option value="osobni">Osobní auto</option>
                 <option value="suv">SUV</option>
                 <option value="kombi">Kombi</option>
@@ -62,25 +60,10 @@ export default function AddVehiclePage() {
               </select>
             </label>
 
-            <label>
-              Značka
-              <input placeholder="např. Škoda" />
-            </label>
-
-            <label>
-              Model
-              <input placeholder="např. Octavia" />
-            </label>
-
-            <label>
-              Rok výroby
-              <input placeholder="např. 2020" />
-            </label>
-
-            <label>
-              SPZ / evidence
-              <input placeholder="např. 1TA234" />
-            </label>
+            <label>Značka<input placeholder="např. Škoda" /></label>
+            <label>Model<input placeholder="např. Octavia" /></label>
+            <label>Rok výroby<input placeholder="např. 2020" /></label>
+            <label>SPZ / evidence<input placeholder="např. 1TA234" /></label>
 
             <label>
               Obrázek / typ ikony
@@ -98,10 +81,7 @@ export default function AddVehiclePage() {
           <div className="grid">
             {(isCar || isCamper) && (
               <>
-                <label>
-                  Aktuální kilometry
-                  <input placeholder="např. 128450" />
-                </label>
+                <label>Aktuální kilometry<input placeholder="např. 128450" /></label>
 
                 <label>
                   Palivo
@@ -114,19 +94,13 @@ export default function AddVehiclePage() {
                   </select>
                 </label>
 
-                <label>
-                  Interval výměny oleje
-                  <input placeholder="např. 15000 km" />
-                </label>
+                <label>Interval výměny oleje<input placeholder="např. 15000 km" /></label>
               </>
             )}
 
             {isForklift && (
               <>
-                <label>
-                  Aktuální motohodiny
-                  <input placeholder="např. 2450 mth" />
-                </label>
+                <label>Aktuální motohodiny<input placeholder="např. 2450 mth" /></label>
 
                 <label>
                   Pohon
@@ -137,19 +111,13 @@ export default function AddVehiclePage() {
                   </select>
                 </label>
 
-                <label>
-                  Interval servisní kontroly
-                  <input placeholder="např. 250 mth" />
-                </label>
+                <label>Interval servisní kontroly<input placeholder="např. 250 mth" /></label>
               </>
             )}
 
             {(isTrailer || isLongTrailer || isCaravan) && (
               <>
-                <label>
-                  Nosnost
-                  <input placeholder="např. 750 kg" />
-                </label>
+                <label>Nosnost<input placeholder="např. 750 kg" /></label>
 
                 <label>
                   Počet náprav
@@ -164,29 +132,15 @@ export default function AddVehiclePage() {
 
             {isCamper && (
               <>
-                <label>
-                  Revize nástavby
-                  <input placeholder="např. 01.06.2026" />
-                </label>
-
-                <label>
-                  Revize plynu
-                  <input placeholder="např. 01.06.2026" />
-                </label>
+                <label>Revize nástavby<input type="date" /></label>
+                <label>Revize plynu<input type="date" /></label>
               </>
             )}
 
             {isCaravan && (
               <>
-                <label>
-                  Revize plynu
-                  <input placeholder="např. 01.06.2026" />
-                </label>
-
-                <label>
-                  Kontrola obytné části
-                  <input placeholder="např. 01.06.2026" />
-                </label>
+                <label>Revize plynu<input type="date" /></label>
+                <label>Kontrola obytné části<input type="date" /></label>
               </>
             )}
           </div>
@@ -196,35 +150,44 @@ export default function AddVehiclePage() {
           <h2>Důležité termíny</h2>
 
           <div className="grid">
-            <label>
-              STK
-              <input placeholder="např. 04.05.2026" />
-            </label>
+            <label>STK<input type="date" /></label>
+
+            <label>Pojištění platí do / další platba<input type="date" /></label>
 
             <label>
-              Pojištění
-              <input placeholder="např. 10.06.2026" />
+              Periodicita pojištění
+              <select>
+                <option>Ročně</option>
+                <option>Pololetně</option>
+                <option>Čtvrtletně</option>
+                <option>Měsíčně</option>
+                <option>Vlastní</option>
+              </select>
             </label>
 
             {(isCar || isCamper) && (
-              <label>
-                Dálniční známka
-                <input placeholder="např. 15.06.2026" />
-              </label>
+              <>
+                <label>Dálniční známka platí od<input type="date" /></label>
+
+                <label>
+                  Platnost dálniční známky
+                  <select>
+                    <option>1 den</option>
+                    <option>10 dní</option>
+                    <option>30 dní</option>
+                    <option>1 rok</option>
+                    <option>Vlastní</option>
+                  </select>
+                </label>
+
+                <label>Dálniční známka platí do<input type="date" /></label>
+              </>
             )}
 
-            {isForklift && (
-              <label>
-                Revize VZV
-                <input placeholder="např. 30.04.2026" />
-              </label>
-            )}
+            {isForklift && <label>Revize VZV<input type="date" /></label>}
 
             {(isTrailer || isLongTrailer || isCaravan) && (
-              <label>
-                Kontrola / servis přívěsu
-                <input placeholder="např. 18.08.2026" />
-              </label>
+              <label>Kontrola / servis přívěsu<input type="date" /></label>
             )}
           </div>
         </section>
@@ -244,17 +207,6 @@ export default function AddVehiclePage() {
 
               <div className="grid">
                 <label>
-                  Periodicita pojištění
-                  <select>
-                    <option>Ročně</option>
-                    <option>Pololetně</option>
-                    <option>Čtvrtletně</option>
-                    <option>Měsíčně</option>
-                    <option>Vlastní</option>
-                  </select>
-                </label>
-
-                <label>
                   Značky v depozitu
                   <select>
                     <option>Ne</option>
@@ -262,44 +214,75 @@ export default function AddVehiclePage() {
                   </select>
                 </label>
 
-                <label>
-                  Datum odevzdání značek
-                  <input placeholder="např. 01.01.2026" />
-                </label>
+                <label>Datum odevzdání značek<input type="date" /></label>
+              </div>
 
-                <label>
-                  Zahraniční dálniční známka
-                  <input placeholder="např. Rakousko, Slovensko..." />
-                </label>
+              <h3>Zahraniční dálniční známky</h3>
 
-                <label>
-                  Platnost zahraniční známky
-                  <select>
-                    <option>1 den</option>
-                    <option>10 dní</option>
-                    <option>30 dní</option>
-                    <option>2 měsíce</option>
-                    <option>1 rok</option>
-                    <option>Vlastní</option>
-                  </select>
-                </label>
+              <div className="foreign-list">
+                {foreignVignettes.map((item, index) => (
+                  <div className="foreign-card" key={item}>
+                    <div className="foreign-head">
+                      <strong>Známka #{index + 1}</strong>
+                      {foreignVignettes.length > 1 && (
+                        <button
+                          type="button"
+                          className="remove"
+                          onClick={() =>
+                            setForeignVignettes(foreignVignettes.filter((v) => v !== item))
+                          }
+                        >
+                          Odebrat
+                        </button>
+                      )}
+                    </div>
 
-                <label>
-                  Platí do
-                  <input placeholder="např. 20.07.2026" />
-                </label>
+                    <div className="grid">
+                      <label>
+                        Stát
+                        <select>
+                          <option>Rakousko</option>
+                          <option>Slovensko</option>
+                          <option>Maďarsko</option>
+                          <option>Slovinsko</option>
+                          <option>Chorvatsko</option>
+                          <option>Polsko</option>
+                          <option>Jiný stát</option>
+                        </select>
+                      </label>
 
+                      <label>
+                        Platnost
+                        <select>
+                          <option>1 den</option>
+                          <option>10 dní</option>
+                          <option>30 dní</option>
+                          <option>2 měsíce</option>
+                          <option>1 rok</option>
+                          <option>Vlastní</option>
+                        </select>
+                      </label>
+
+                      <label>Platí od<input type="date" /></label>
+                      <label>Platí do<input type="date" /></label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="add-foreign"
+                onClick={() => setForeignVignettes([...foreignVignettes, Date.now()])}
+              >
+                ＋ Přidat další zahraniční známku
+              </button>
+
+              <div className="grid advanced-note">
                 {(isCamper || isCaravan) && (
                   <>
-                    <label>
-                      Revize elektroinstalace
-                      <input placeholder="např. 01.06.2026" />
-                    </label>
-
-                    <label>
-                      Kontrola těsnosti
-                      <input placeholder="např. 01.06.2026" />
-                    </label>
+                    <label>Revize elektroinstalace<input type="date" /></label>
+                    <label>Kontrola těsnosti<input type="date" /></label>
                   </>
                 )}
 
@@ -316,20 +299,9 @@ export default function AddVehiclePage() {
           <h2>Odpovědná osoba</h2>
 
           <div className="grid">
-            <label>
-              Jméno
-              <input placeholder="Jan Novák" />
-            </label>
-
-            <label>
-              Telefon
-              <input placeholder="+420..." />
-            </label>
-
-            <label>
-              E-mail
-              <input placeholder="email@firma.cz" />
-            </label>
+            <label>Jméno<input placeholder="Jan Novák" /></label>
+            <label>Telefon<input placeholder="+420..." /></label>
+            <label>E-mail<input placeholder="email@firma.cz" /></label>
           </div>
         </section>
 
@@ -375,6 +347,11 @@ export default function AddVehiclePage() {
         h2 {
           margin: 0 0 16px;
           font-size: 22px;
+        }
+
+        h3 {
+          margin: 18px 0 12px;
+          font-size: 18px;
         }
 
         p {
@@ -453,6 +430,52 @@ export default function AddVehiclePage() {
           margin-top: 18px;
           padding-top: 18px;
           border-top: 1px solid #e5e7eb;
+        }
+
+        .foreign-list {
+          display: grid;
+          gap: 14px;
+        }
+
+        .foreign-card {
+          border: 1px solid #e5e7eb;
+          border-radius: 18px;
+          padding: 16px;
+          background: #fbfcfe;
+        }
+
+        .foreign-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 12px;
+        }
+
+        .remove {
+          border: 1px solid #fecaca;
+          background: #fff1f2;
+          color: #b91c1c;
+          border-radius: 999px;
+          padding: 7px 12px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .add-foreign {
+          width: 100%;
+          margin-top: 14px;
+          border: 1px solid #dbe3f0;
+          background: #eef3ff;
+          color: #2563eb;
+          border-radius: 14px;
+          padding: 13px;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .advanced-note {
+          margin-top: 18px;
         }
 
         .actions {
