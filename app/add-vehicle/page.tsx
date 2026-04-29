@@ -6,6 +6,14 @@ export default function AddVehiclePage() {
   const [vehicleType, setVehicleType] = useState("osobni");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showStkHelper, setShowStkHelper] = useState(false);
+  const [importNotice, setImportNotice] = useState("");
+
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
+  const [plateOrEvidence, setPlateOrEvidence] = useState("");
+  const [vin, setVin] = useState("");
+  const [fuel, setFuel] = useState("Benzín");
 
   const [stkValidUntil, setStkValidUntil] = useState("");
   const [firstRegistrationDate, setFirstRegistrationDate] = useState("");
@@ -50,9 +58,9 @@ export default function AddVehiclePage() {
 
   const hasStk = isCar || isCamper || isTrailer || isLongTrailer || isCaravan;
 
-  const formatDate = (date) => date.toISOString().split("T")[0];
+  const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
-  const calculateValidToDate = (startDate, period) => {
+  const calculateValidToDate = (startDate: string, period: string) => {
     if (!startDate || period === "Vlastní") return "";
 
     const date = new Date(startDate);
@@ -108,7 +116,7 @@ export default function AddVehiclePage() {
     setStkValidUntil(formatDate(date));
   };
 
-  const calculateOilService = (oilKm, intervalKm, oilDate) => {
+  const calculateOilService = (oilKm: string, intervalKm: string, oilDate: string) => {
     if (oilKm && intervalKm) {
       setNextOilKm(String(Number(oilKm) + Number(intervalKm)));
     }
@@ -121,7 +129,7 @@ export default function AddVehiclePage() {
     }
   };
 
-  const updateForeignVignette = (id, field, value) => {
+  const updateForeignVignette = (id: number, field: string, value: string) => {
     setForeignVignettes((items) =>
       items.map((item) => {
         if (item.id !== id) return item;
@@ -144,6 +152,21 @@ export default function AddVehiclePage() {
     );
   };
 
+  const loadDemoETechnicakData = () => {
+    setVehicleType("kombi");
+    setBrand("MAZDA");
+    setModel("6");
+    setYear("2016");
+    setPlateOrEvidence("");
+    setVin("JMZGJ697861329538");
+    setFuel("Benzín");
+    setFirstRegistrationDate("2016-08-01");
+    setStkValidUntil("2026-07-19");
+    setImportNotice(
+      "Demo data načtena z eTechničáku: MAZDA 6, VIN, benzín, první registrace 01.08.2016 a STK do 19.07.2026. SPZ v PDF nebyla nalezena, doplň ji ručně."
+    );
+  };
+
   return (
     <main className="page">
       <div className="shell">
@@ -159,9 +182,10 @@ export default function AddVehiclePage() {
               Vyber typ vozidla. Formulář se automaticky přizpůsobí tomu,
               co má pro dané vozidlo smysl.
             </p>
+            {importNotice && <div className="import-notice">{importNotice}</div>}
           </div>
 
-          <button className="secondary" type="button">
+          <button className="secondary" type="button" onClick={loadDemoETechnicakData}>
             📄 Načíst z eTechničáku / QR
           </button>
         </section>
@@ -185,10 +209,30 @@ export default function AddVehiclePage() {
               </select>
             </label>
 
-            <label>Značka<input placeholder="např. Škoda" /></label>
-            <label>Model<input placeholder="např. Octavia" /></label>
-            <label>Rok výroby<input placeholder="např. 2020" /></label>
-            <label>SPZ / evidence<input placeholder="např. 1TA234" /></label>
+            <label>
+              Značka
+              <input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="např. Škoda" />
+            </label>
+
+            <label>
+              Model
+              <input value={model} onChange={(e) => setModel(e.target.value)} placeholder="např. Octavia" />
+            </label>
+
+            <label>
+              Rok výroby
+              <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="např. 2020" />
+            </label>
+
+            <label>
+              SPZ / evidence
+              <input value={plateOrEvidence} onChange={(e) => setPlateOrEvidence(e.target.value)} placeholder="např. 1TA234" />
+            </label>
+
+            <label>
+              VIN
+              <input value={vin} onChange={(e) => setVin(e.target.value)} placeholder="např. JMZGJ..." />
+            </label>
 
             <label>
               Obrázek / typ ikony
@@ -217,7 +261,7 @@ export default function AddVehiclePage() {
 
                 <label>
                   Palivo
-                  <select>
+                  <select value={fuel} onChange={(e) => setFuel(e.target.value)}>
                     <option>Benzín</option>
                     <option>Nafta</option>
                     <option>Elektro</option>
@@ -915,6 +959,18 @@ export default function AddVehiclePage() {
           color: #6b7280;
           text-decoration: none;
           font-weight: 700;
+        }
+
+        .import-notice {
+          margin-top: 12px;
+          padding: 12px 14px;
+          border: 1px solid #bfdbfe;
+          background: #eff6ff;
+          color: #1e40af;
+          border-radius: 14px;
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 1.45;
         }
 
         @media (max-width: 760px) {
