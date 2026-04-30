@@ -14,6 +14,7 @@ export default function AddVehiclePage() {
   const [plateOrEvidence, setPlateOrEvidence] = useState("");
   const [vin, setVin] = useState("");
   const [fuel, setFuel] = useState("Benzín");
+  const [manualVehicleImage, setManualVehicleImage] = useState("");
 
   const [stkValidUntil, setStkValidUntil] = useState("");
   const [firstRegistrationDate, setFirstRegistrationDate] = useState("");
@@ -57,7 +58,7 @@ export default function AddVehiclePage() {
   };
 
   const selectedVehicleImage =
-    vehicleImages[vehicleType] || "/vehicles/auto-sedan.jpg";
+    manualVehicleImage || vehicleImages[vehicleType] || "/vehicles/auto-sedan.jpg";
 
   const isCar =
     vehicleType === "osobni" ||
@@ -173,6 +174,7 @@ export default function AddVehiclePage() {
 
   const loadDemoETechnicakData = () => {
     setVehicleType("kombi");
+    setManualVehicleImage("/vehicles/Mazda_6.jpg");
     setBrand("MAZDA");
     setModel("6");
     setYear("2016");
@@ -225,7 +227,10 @@ export default function AddVehiclePage() {
               Typ vozidla
               <select
                 value={vehicleType}
-                onChange={(e) => setVehicleType(e.target.value)}
+                onChange={(e) => {
+                  setVehicleType(e.target.value);
+                  setManualVehicleImage("");
+                }}
               >
                 <option value="osobni">Osobní auto</option>
                 <option value="suv">SUV</option>
@@ -289,10 +294,22 @@ export default function AddVehiclePage() {
             </label>
 
             <label>
-              Obrázek / typ ikony
-              <select>
-                <option>Automaticky podle typu</option>
-                <option>Vybrat ručně</option>
+              Obrázek vozidla
+              <select
+                value={manualVehicleImage}
+                onChange={(e) => setManualVehicleImage(e.target.value)}
+              >
+                <option value="">Automaticky podle typu</option>
+                <option value="/vehicles/auto-sedan.jpg">Osobní auto</option>
+                <option value="/vehicles/suv-kodiaq.jpg">SUV</option>
+                <option value="/vehicles/Skoda-Fabia-Combi.jpg">Kombi</option>
+                <option value="/vehicles/Mazda_6.jpg">Mazda 6</option>
+                <option value="/vehicles/pickup-toyota.jpg">Pick-up</option>
+                <option value="/vehicles/privesny-vozik.jpg">Přívěsný vozík</option>
+                <option value="/vehicles/dlouhy-prives.jpg">Dlouhý přívěs</option>
+                <option value="/vehicles/vysokozdvizny-vozik.jpg">VZV</option>
+                <option value="/vehicles/obytny-prives.jpg">Obytný přívěs</option>
+                <option value="/vehicles/obytne-auto.jpg">Obytné auto</option>
               </select>
             </label>
           </div>
@@ -950,7 +967,7 @@ export default function AddVehiclePage() {
           align-items: center;
           min-height: 170px;
           padding: 18px;
-          background: #f8fbff;
+          background: #ffffff;
           border: 1px solid #dbeafe;
           border-radius: 18px;
         }
