@@ -15,6 +15,7 @@ export default function HomePage() {
       plate: "2BC5678",
       image: "/vehicles/suv-kodiaq.jpg",
       status: "ok",
+      link: "#",
       lines: ["STK: 12.09.2026", "Pojištění: 10.06.2026"],
     },
     {
@@ -22,6 +23,7 @@ export default function HomePage() {
       plate: "3XY9876",
       image: "/vehicles/pickup-ranger.jpg",
       status: "warning",
+      link: "#",
       lines: ["STK: 20.07.2025", "Pojištění: 15.06.2025"],
     },
     {
@@ -29,6 +31,7 @@ export default function HomePage() {
       plate: "4AA1234",
       image: "/vehicles/privesny-vozik.jpg",
       status: "ok",
+      link: "#",
       lines: ["STK: 18.08.2026", "Známka: 01.07.2026"],
     },
     {
@@ -36,6 +39,7 @@ export default function HomePage() {
       plate: "VZV001",
       image: "/vehicles/vysokozdvizny-vozik.jpg",
       status: "ok",
+      link: "#",
       lines: ["Revize: 30.04.2026", "Servis: 30.06.2026"],
     },
     {
@@ -43,6 +47,7 @@ export default function HomePage() {
       plate: "5BB6789",
       image: "/vehicles/obytny-prives.jpg",
       status: "ok",
+      link: "#",
       lines: ["STK: 05.06.2026", "Servis: 01.07.2026"],
     },
     {
@@ -50,6 +55,7 @@ export default function HomePage() {
       plate: "6CC7890",
       image: "/vehicles/obytne-auto.jpg",
       status: "ok",
+      link: "#",
       lines: ["STK: 01.10.2026", "Servis: 15.09.2026"],
     },
     {
@@ -57,6 +63,7 @@ export default function HomePage() {
       plate: "7DD8901",
       image: "/vehicles/dlouhy-prives.jpg",
       status: "ok",
+      link: "#",
       lines: ["STK: 22.11.2026", "Kontrola: 10.10.2026"],
     },
   ];
@@ -93,6 +100,14 @@ export default function HomePage() {
       type: "soon",
     },
   ];
+
+  const handleDeleteVehicle = (vehicleName: string) => {
+    const confirmed = confirm(`Opravdu chcete smazat vozidlo ${vehicleName}?`);
+
+    if (confirmed) {
+      alert("Zatím jen demo – skutečné smazání napojíme v dalším kroku.");
+    }
+  };
 
   return (
     <main className="page">
@@ -174,10 +189,14 @@ export default function HomePage() {
           </div>
 
           <div className="cards-grid">
-            {vehicles.map((vehicle) => {
-              const content = (
-                <>
-                  <img src={vehicle.image} alt={vehicle.name} className="vehicle-image" />
+            {vehicles.map((vehicle) => (
+              <article key={vehicle.plate} className="vehicle-card">
+                <a href={vehicle.link || "#"} className="vehicle-main">
+                  <img
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    className="vehicle-image"
+                  />
                   <div className="vehicle-name">{vehicle.name}</div>
                   <div className="vehicle-plate">{vehicle.plate}</div>
                   <div className="vehicle-line">📅 {vehicle.lines[0]}</div>
@@ -185,23 +204,27 @@ export default function HomePage() {
                   <div className={`status ${vehicle.status}`}>
                     {vehicle.status === "warning" ? "POZOR" : "OK"}
                   </div>
-                </>
-              );
+                </a>
 
-              if (vehicle.link) {
-                return (
-                  <a key={vehicle.plate} href={vehicle.link} className="vehicle-card clickable">
-                    {content}
+                <div className="vehicle-actions">
+                  <a href={vehicle.link || "#"} className="card-btn detail">
+                    Detail
                   </a>
-                );
-              }
 
-              return (
-                <article key={vehicle.plate} className="vehicle-card">
-                  {content}
-                </article>
-              );
-            })}
+                  <a href="/add-vehicle" className="card-btn edit">
+                    Upravit
+                  </a>
+
+                  <button
+                    className="card-btn delete"
+                    type="button"
+                    onClick={() => handleDeleteVehicle(vehicle.name)}
+                  >
+                    Smazat
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
 
           <div className="bottom-grid">
@@ -457,22 +480,26 @@ export default function HomePage() {
           position: relative;
           background: #fff;
           border: 1px solid #e5e7eb;
-          border-radius: 18px;
+          border-radius: 20px;
           padding: 14px;
           box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
-          text-decoration: none;
           color: inherit;
-          display: block;
-        }
-
-        .vehicle-card.clickable {
-          cursor: pointer;
+          display: flex;
+          flex-direction: column;
           transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .vehicle-card.clickable:hover {
+        .vehicle-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 18px 34px rgba(15, 23, 42, 0.09);
+        }
+
+        .vehicle-main {
+          position: relative;
+          display: block;
+          color: inherit;
+          text-decoration: none;
+          padding-bottom: 34px;
         }
 
         .vehicle-image {
@@ -480,6 +507,8 @@ export default function HomePage() {
           height: 120px;
           object-fit: contain;
           margin-bottom: 8px;
+          background: #fff;
+          border-radius: 14px;
         }
 
         .vehicle-name {
@@ -502,8 +531,8 @@ export default function HomePage() {
 
         .status {
           position: absolute;
-          right: 12px;
-          bottom: 12px;
+          right: 0;
+          bottom: 0;
           font-size: 12px;
           font-weight: 700;
           color: #fff;
@@ -517,6 +546,50 @@ export default function HomePage() {
 
         .status.warning {
           background: #ef4444;
+        }
+
+        .vehicle-actions {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
+          margin-top: 12px;
+          padding-top: 12px;
+          border-top: 1px solid #eef2f7;
+        }
+
+        .card-btn {
+          min-height: 36px;
+          border-radius: 12px;
+          padding: 8px 10px;
+          font-size: 13px;
+          font-weight: 800;
+          text-align: center;
+          cursor: pointer;
+          border: 1px solid #dbe3f0;
+          background: #f8fbff;
+          color: #2563eb;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-family: Arial, sans-serif;
+        }
+
+        .card-btn.detail {
+          background: #eff6ff;
+          border-color: #bfdbfe;
+          color: #1d4ed8;
+        }
+
+        .card-btn.edit {
+          background: #fff;
+          color: #111827;
+        }
+
+        .card-btn.delete {
+          background: #fff1f2;
+          border-color: #fecaca;
+          color: #b91c1c;
         }
 
         .bottom-grid {
@@ -692,8 +765,21 @@ export default function HomePage() {
             grid-template-columns: 1fr;
           }
 
+          .vehicle-card {
+            border-radius: 18px;
+          }
+
           .vehicle-image {
             height: 110px;
+          }
+
+          .vehicle-actions {
+            grid-template-columns: 1fr;
+          }
+
+          .card-btn {
+            min-height: 42px;
+            font-size: 14px;
           }
 
           .bottom-grid {
