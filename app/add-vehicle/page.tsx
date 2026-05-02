@@ -1,6 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+);
 
 export default function AddVehiclePage() {
   const [vehicleType, setVehicleType] = useState("osobni");
@@ -186,6 +192,45 @@ export default function AddVehiclePage() {
     setImportNotice(
       "Demo data načtena z eTechničáku: MAZDA 6, VIN, benzín, první registrace 01.08.2016 a STK do 19.07.2026. SPZ v PDF nebyla nalezena, doplň ji ručně."
     );
+  };
+
+  const handleSaveVehicle = async () => {
+    const vehicleName = `${brand} ${model}`.trim();
+
+    if (!vehicleName) {
+      alert("Vyplň prosím alespoň značku nebo model vozidla.");
+      return;
+    }
+
+    const noteParts = [];
+
+    if (vin) noteParts.push(`VIN: ${vin}`);
+    if (fuel && (isCar || isCamper)) noteParts.push(`Palivo: ${fuel}`);
+    if (currentKm) noteParts.push(`Km: ${currentKm}`);
+    if (nextOilKm) noteParts.push(`Další olej: ${nextOilKm} km`);
+    if (nextOilDate) noteParts.push(`Olej nejpozději: ${nextOilDate}`);
+    if (insuranceTo) noteParts.push(`Pojištění do: ${insuranceTo}`);
+    if (vignetteTo) noteParts.push(`Známka do: ${vignetteTo}`);
+
+    const { error } = await supabase.from("vehicles").insert([
+      {
+        name: vehicleName,
+        plate: plateOrEvidence || "-",
+        image: selectedVehicleImage,
+        status: "ok",
+        stk: stkValidUntil || "",
+        note: noteParts.join(" | "),
+      },
+    ]);
+
+    if (error) {
+      console.error("Chyba při ukládání vozidla:", error);
+      alert("Vozidlo se nepodařilo uložit. Zkontrolujeme nastavení Supabase.");
+      return;
+    }
+
+    alert("Vozidlo bylo uloženo.");
+    window.location.href = "/";
   };
 
   return (
@@ -848,7 +893,11 @@ export default function AddVehiclePage() {
         </section>
 
         <div className="actions">
-          <button className="primary" type="button">
+          <button
+            className="primary"
+            type="button"
+            onClick={handleSaveVehicle}
+          >
             Uložit vozidlo
           </button>
           <a href="/" className="cancel">
