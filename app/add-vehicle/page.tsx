@@ -194,45 +194,63 @@ export default function AddVehiclePage() {
     );
   };
 
-  const handleSaveVehicle = async () => {
-    const vehicleName = `${brand} ${model}`.trim();
+ const handleSaveVehicle = async () => {
+  const vehicleName = `${brand} ${model}`.trim();
 
-    if (!vehicleName) {
-      alert("Vyplň prosím alespoň značku nebo model vozidla.");
-      return;
-    }
+  if (!vehicleName) {
+    alert("Vyplň prosím alespoň značku nebo model vozidla.");
+    return;
+  }
 
-    const noteParts = [];
-
-    if (vin) noteParts.push(`VIN: ${vin}`);
-    if (fuel && (isCar || isCamper)) noteParts.push(`Palivo: ${fuel}`);
-    if (currentKm) noteParts.push(`Km: ${currentKm}`);
-    if (nextOilKm) noteParts.push(`Další olej: ${nextOilKm} km`);
-    if (nextOilDate) noteParts.push(`Olej nejpozději: ${nextOilDate}`);
-    if (insuranceTo) noteParts.push(`Pojištění do: ${insuranceTo}`);
-    if (vignetteTo) noteParts.push(`Známka do: ${vignetteTo}`);
-
-    const { error } = await supabase.from("vehicles").insert([
-      {
-        name: vehicleName,
-        plate: plateOrEvidence || "-",
-        image: selectedVehicleImage,
-        status: "ok",
-        stk: stkValidUntil || "",
-        note: noteParts.join(" | "),
-      },
-    ]);
-
-    if (error) {
-      console.error("Chyba při ukládání vozidla:", error);
-      alert("Vozidlo se nepodařilo uložit. Zkontrolujeme nastavení Supabase.");
-      return;
-    }
-
-    alert("Vozidlo bylo uloženo.");
-    window.location.href = "/";
+  const toNumberOrNull = (value: string) => {
+    if (!value) return null;
+    const number = Number(value);
+    return Number.isNaN(number) ? null : number;
   };
 
+  const noteParts = [];
+
+  if (vin) noteParts.push(`VIN: ${vin}`);
+  if (fuel && (isCar || isCamper)) noteParts.push(`Palivo: ${fuel}`);
+
+  const { error } = await supabase.from("vehicles").insert([
+    {
+      name: vehicleName,
+      plate: plateOrEvidence || "-",
+      image: selectedVehicleImage,
+      status: "ok",
+      stk: stkValidUntil || "",
+      note: noteParts.join(" | "),
+
+      vehicle_type: vehicleType,
+      brand: brand || "",
+      model: model || "",
+      year: year || "",
+      vin: vin || "",
+      fuel: fuel || "",
+      current_km: toNumberOrNull(currentKm),
+
+      stk_valid_until: stkValidUntil || null,
+      insurance_to: insuranceTo || null,
+      vignette_to: vignetteTo || null,
+
+      next_oil_km: toNumberOrNull(nextOilKm),
+      next_oil_date: nextOilDate || null,
+
+      service_to: null,
+      inspection_to: null,
+    },
+  ]);
+
+  if (error) {
+    console.error("Chyba při ukládání vozidla:", error);
+    alert("Vozidlo se nepodařilo uložit. Zkontrolujeme nastavení Supabase.");
+    return;
+  }
+
+  alert("Vozidlo bylo uloženo.");
+  window.location.href = "/";
+};
   return (
     <main className="page">
       <div className="shell">
