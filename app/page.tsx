@@ -11,6 +11,21 @@ type Vehicle = {
   status: string;
   stk: string;
   note: string;
+
+  vehicle_type?: string;
+  brand?: string;
+  model?: string;
+  year?: number | string;
+  vin?: string;
+  fuel?: string;
+  current_km?: number | null;
+  stk_valid_until?: string | null;
+  insurance_to?: string | null;
+  vignette_to?: string | null;
+  next_oil_km?: number | null;
+  next_oil_date?: string | null;
+  service_to?: string | null;
+  inspection_to?: string | null;
 };
 
 const supabase = createClient(
@@ -38,6 +53,54 @@ export default function HomePage() {
 
     fetchVehicles();
   }, []);
+
+  const formatDateCz = (value?: string | null) => {
+    if (!value) return "-";
+
+    const parts = value.split("-");
+    if (parts.length !== 3) return value;
+
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  };
+
+  const getVehiclePreviewLines = (vehicle: Vehicle) => {
+    const type = vehicle.vehicle_type;
+
+    const stkLine = `STK: ${formatDateCz(
+      vehicle.stk_valid_until || vehicle.stk
+    )}`;
+
+    if (
+      type === "osobni" ||
+      type === "suv" ||
+      type === "kombi" ||
+      type === "pickup" ||
+      type === "obytne-auto"
+    ) {
+      const oilText = vehicle.next_oil_km
+        ? `Výměna oleje: ${vehicle.next_oil_km} km`
+        : `Výměna oleje: ${formatDateCz(vehicle.next_oil_date)}`;
+
+      return [stkLine, oilText];
+    }
+
+    if (
+      type === "prives" ||
+      type === "dlouhy-prives" ||
+      type === "obytny-prives"
+    ) {
+      return [stkLine, `Pojištění: ${formatDateCz(vehicle.insurance_to)}`];
+    }
+
+    if (type === "vzv") {
+      return [
+        `Revize: ${formatDateCz(vehicle.inspection_to)}`,
+        `Servis: ${formatDateCz(vehicle.service_to)}`,
+      ];
+    }
+
+    return [stkLine, vehicle.note || "-"];
+  };
 
   const upcoming = [
     {
@@ -153,6 +216,8 @@ export default function HomePage() {
 
           <div className="cards-grid">
             {vehicles.map((vehicle) => {
+              const previewLines = getVehiclePreviewLines(vehicle);
+
               const content = (
                 <>
                   <img
@@ -162,8 +227,8 @@ export default function HomePage() {
                   />
                   <div className="vehicle-name">{vehicle.name}</div>
                   <div className="vehicle-plate">{vehicle.plate}</div>
-                  <div className="vehicle-line">📅 STK: {vehicle.stk || "-"}</div>
-                  <div className="vehicle-line">🛠 {vehicle.note || "-"}</div>
+                  <div className="vehicle-line">📅 {previewLines[0]}</div>
+                  <div className="vehicle-line">🛠 {previewLines[1]}</div>
                   <div className={`status ${vehicle.status || "ok"}`}>
                     {vehicle.status === "warning" ? "POZOR" : "OK"}
                   </div>
