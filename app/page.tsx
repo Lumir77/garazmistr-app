@@ -12,6 +12,7 @@ type Vehicle = {
   image?: string;
   status?: string;
   note?: string;
+  stk?: string;
 
   vehicle_type?: string;
   brand?: string;
