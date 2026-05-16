@@ -5,27 +5,36 @@ import { createClient } from "@supabase/supabase-js";
 
 type Vehicle = {
   id: string;
-  name: string;
-  plate: string;
-  image: string;
-  status: string;
-  stk: string;
-  note: string;
+  created_at?: string;
+
+  name?: string;
+  plate?: string;
+  image?: string;
+  status?: string;
+  note?: string;
 
   vehicle_type?: string;
   brand?: string;
   model?: string;
-  year?: number | string;
+  year?: string;
+
   vin?: string;
   fuel?: string;
-  current_km?: number | null;
-  stk_valid_until?: string | null;
-  insurance_to?: string | null;
-  vignette_to?: string | null;
-  next_oil_km?: number | null;
-  next_oil_date?: string | null;
-  service_to?: string | null;
-  inspection_to?: string | null;
+
+  current_km?: number;
+
+  stk_valid_until?: string;
+
+  insurance_to?: string;
+
+  vignette_to?: string;
+
+  next_oil_km?: number;
+  next_oil_date?: string;
+
+  service_to?: string;
+
+  inspection_to?: string;
 };
 
 const supabase = createClient(
