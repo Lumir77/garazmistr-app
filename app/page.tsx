@@ -236,9 +236,13 @@ export default function HomePage() {
               );
 
               return (
-                <article key={vehicle.id} className="vehicle-card">
+                <a 
+                  key={vehicle.id}
+                  href={`/vehicle/${vehicle.id}`}
+                  className="vehicle-card clickable"
+                >
                   {content}
-                </article>
+                </a>
               );
             })}
           </div>
@@ -502,6 +506,15 @@ export default function HomePage() {
           text-decoration: none;
           color: inherit;
           display: block;
+        }
+        .vehicle-card.clickable {
+          cursor: pointer;
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+      .vehicle-card.clickable:hover {
+      transform: translateY(-2px);
+        box-shadow: 0 18px 34px rgba(15, 23, 42, 0.09);
         }
 
         .vehicle-image {
