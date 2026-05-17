@@ -39,6 +39,7 @@ export default function VehicleDetailPage({
 }) {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   const formatDateCz = (value?: string | null) => {
     if (!value) return "-";
@@ -75,6 +76,36 @@ export default function VehicleDetailPage({
     vehicle?.vehicle_type === "obytny-prives";
 
   const isForklift = vehicle?.vehicle_type === "vzv";
+
+  const handleDeleteVehicle = async () => {
+    if (!vehicle?.id) {
+      alert("Chybí ID vozidla.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Opravdu chceš smazat vozidlo ${vehicle.name || ""}?`
+    );
+
+    if (!confirmed) return;
+
+    setDeleting(true);
+
+    const { error } = await supabase
+      .from("vehicles")
+      .delete()
+      .eq("id", vehicle.id);
+
+    if (error) {
+      console.error("Chyba při mazání vozidla:", error);
+      alert("Vozidlo se nepodařilo smazat.");
+      setDeleting(false);
+      return;
+    }
+
+    alert("Vozidlo bylo smazáno.");
+    window.location.href = "/";
+  };
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -323,12 +354,20 @@ export default function VehicleDetailPage({
         </section>
 
         <section className="panel actions-panel">
-          <button type="button" className="secondary">
+          <a
+            href={`/vehicle/${vehicle.id}/edit`}
+            className="secondary"
+          >
             Upravit vozidlo
-          </button>
+          </a>
 
-          <button type="button" className="danger">
-            Smazat vozidlo
+          <button
+            type="button"
+            className="danger"
+            onClick={handleDeleteVehicle}
+            disabled={deleting}
+          >
+            {deleting ? "Mažu vozidlo..." : "Smazat vozidlo"}
           </button>
         </section>
       </div>
@@ -470,6 +509,10 @@ export default function VehicleDetailPage({
           padding: 12px 18px;
           font-weight: 800;
           cursor: pointer;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .secondary {
@@ -482,6 +525,11 @@ export default function VehicleDetailPage({
           border: 1px solid #fecaca;
           background: #fff1f2;
           color: #b91c1c;
+        }
+
+        .danger:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         @media (max-width: 760px) {
