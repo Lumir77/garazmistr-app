@@ -49,6 +49,33 @@ export default function VehicleDetailPage({
     return `${parts[2]}.${parts[1]}.${parts[0]}`;
   };
 
+  const vehicleTypeLabels: Record<string, string> = {
+    osobni: "Osobní auto",
+    suv: "SUV",
+    kombi: "Kombi",
+    pickup: "Pick-up",
+    prives: "Přívěsný vozík",
+    "dlouhy-prives": "Dlouhý přívěs",
+    vzv: "Vysokozdvižný vozík",
+    "obytny-prives": "Obytný přívěs",
+    "obytne-auto": "Obytné auto",
+  };
+
+  const isCar =
+    vehicle?.vehicle_type === "osobni" ||
+    vehicle?.vehicle_type === "suv" ||
+    vehicle?.vehicle_type === "kombi" ||
+    vehicle?.vehicle_type === "pickup";
+
+  const isCamper = vehicle?.vehicle_type === "obytne-auto";
+
+  const isTrailer =
+    vehicle?.vehicle_type === "prives" ||
+    vehicle?.vehicle_type === "dlouhy-prives" ||
+    vehicle?.vehicle_type === "obytny-prives";
+
+  const isForklift = vehicle?.vehicle_type === "vzv";
+
   useEffect(() => {
     const fetchVehicle = async () => {
       const { data, error } = await supabase
@@ -173,7 +200,9 @@ export default function VehicleDetailPage({
           <div className="grid">
             <div className="item">
               <span>Typ vozidla</span>
-              <strong>{vehicle.vehicle_type || "-"}</strong>
+              <strong>
+                {vehicleTypeLabels[vehicle.vehicle_type || ""] || "-"}
+              </strong>
             </div>
 
             <div className="item">
@@ -207,17 +236,37 @@ export default function VehicleDetailPage({
           <h2>Provozní údaje</h2>
 
           <div className="grid">
-            <div className="item">
-              <span>Palivo / pohon</span>
-              <strong>{vehicle.fuel || "-"}</strong>
-            </div>
+            {(isCar || isCamper) && (
+              <>
+                <div className="item">
+                  <span>Palivo / pohon</span>
+                  <strong>{vehicle.fuel || "-"}</strong>
+                </div>
 
-            <div className="item">
-              <span>Aktuální kilometry</span>
-              <strong>
-                {vehicle.current_km ? `${vehicle.current_km} km` : "-"}
-              </strong>
-            </div>
+                <div className="item">
+                  <span>Aktuální kilometry</span>
+                  <strong>
+                    {vehicle.current_km ? `${vehicle.current_km} km` : "-"}
+                  </strong>
+                </div>
+              </>
+            )}
+
+            {isTrailer && (
+              <div className="item">
+                <span>Typ přívěsu</span>
+                <strong>
+                  {vehicleTypeLabels[vehicle.vehicle_type || ""] || "-"}
+                </strong>
+              </div>
+            )}
+
+            {isForklift && (
+              <div className="item">
+                <span>Servis / revize</span>
+                <strong>{formatDateCz(vehicle.service_to)}</strong>
+              </div>
+            )}
           </div>
         </section>
 
@@ -235,22 +284,26 @@ export default function VehicleDetailPage({
               <strong>{formatDateCz(vehicle.insurance_to)}</strong>
             </div>
 
-            <div className="item">
-              <span>Dálniční známka do</span>
-              <strong>{formatDateCz(vehicle.vignette_to)}</strong>
-            </div>
+            {(isCar || isCamper) && (
+              <>
+                <div className="item">
+                  <span>Dálniční známka do</span>
+                  <strong>{formatDateCz(vehicle.vignette_to)}</strong>
+                </div>
 
-            <div className="item">
-              <span>Další výměna oleje při km</span>
-              <strong>
-                {vehicle.next_oil_km ? `${vehicle.next_oil_km} km` : "-"}
-              </strong>
-            </div>
+                <div className="item">
+                  <span>Další výměna oleje při km</span>
+                  <strong>
+                    {vehicle.next_oil_km ? `${vehicle.next_oil_km} km` : "-"}
+                  </strong>
+                </div>
 
-            <div className="item">
-              <span>Další výměna oleje nejpozději</span>
-              <strong>{formatDateCz(vehicle.next_oil_date)}</strong>
-            </div>
+                <div className="item">
+                  <span>Další výměna oleje nejpozději</span>
+                  <strong>{formatDateCz(vehicle.next_oil_date)}</strong>
+                </div>
+              </>
+            )}
 
             <div className="item">
               <span>Servis do</span>
