@@ -44,8 +44,10 @@ export default function VehicleDetailPage({
 
   const formatDateCz = (value?: string | null) => {
     if (!value) return "-";
+
     const parts = value.split("-");
     if (parts.length !== 3) return value;
+
     return `${parts[2]}.${parts[1]}.${parts[0]}`;
   };
 
@@ -136,6 +138,7 @@ export default function VehicleDetailPage({
             color: #111827;
             font-family: Arial, sans-serif;
           }
+
           .shell {
             max-width: 980px;
             margin: 0 auto;
@@ -166,15 +169,18 @@ export default function VehicleDetailPage({
             color: #111827;
             font-family: Arial, sans-serif;
           }
+
           .shell {
             max-width: 980px;
             margin: 0 auto;
           }
+
           .back {
             color: #2563eb;
             text-decoration: none;
             font-weight: 700;
           }
+
           .panel {
             margin-top: 20px;
             background: #fff;
@@ -354,35 +360,35 @@ export default function VehicleDetailPage({
           >
             Smazat vozidlo
           </button>
-
-          {showDeleteConfirm && (
-            <div className="delete-confirm">
-              <p>
-                Opravdu chceš smazat vozidlo
-                <strong> {vehicle.name}</strong>?
-              </p>
-
-              <div className="delete-actions">
-                <button
-                  type="button"
-                  className="danger"
-                  onClick={handleDeleteVehicle}
-                  disabled={deleting}
-                >
-                  {deleting ? "Mažu..." : "Ano, smazat"}
-                </button>
-
-                <button
-                  type="button"
-                  className="secondary"
-                  onClick={() => setShowDeleteConfirm(false)}
-                >
-                  Zrušit
-                </button>
-              </div>
-            </div>
-          )}
         </section>
+
+        {showDeleteConfirm && (
+          <section className="panel delete-confirm">
+            <p>
+              Opravdu chceš smazat vozidlo
+              <strong> {vehicle.name}</strong>?
+            </p>
+
+            <div className="delete-actions">
+              <button
+                type="button"
+                className="danger"
+                onClick={handleDeleteVehicle}
+                disabled={deleting}
+              >
+                {deleting ? "Mažu..." : "Ano, smazat"}
+              </button>
+
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Zrušit
+              </button>
+            </div>
+          </section>
+        )}
       </div>
 
       <style jsx>{`
@@ -513,7 +519,6 @@ export default function VehicleDetailPage({
 
         .actions-panel {
           display: flex;
-          flex-wrap: wrap;
           gap: 12px;
         }
 
@@ -547,17 +552,8 @@ export default function VehicleDetailPage({
         }
 
         .delete-confirm {
-          width: 100%;
-          margin-top: 6px;
           border: 1px solid #fecaca;
           background: #fff5f5;
-          border-radius: 18px;
-          padding: 18px;
-        }
-
-        .delete-confirm p {
-          margin: 0 0 4px;
-          color: #111827;
         }
 
         .delete-actions {
